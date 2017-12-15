@@ -2,14 +2,14 @@ clear all;
 close all;
 clc; 
 %% Parameters for planes
-AR = 9.2;
-L_D = 16.5; %L/D Guess
+AR = 9.7;
+L_D = 17; %L/D Guess
 m_payload=1000; %Set payload weight
 Range = 1000;% range in km
 
 V_max_kmh = 500; %  maximum velocity not cruise (km/h)
 V_cruise_kmh = 450;
-V_stall_kmh = 140; 
+V_stall_kmh = 145; 
 C_L_max = 2; %With flaps used
 
 
@@ -125,7 +125,7 @@ end
 M_to_refined = Wo_calc(12,1)*0.45359; %Convert back to kg
 M_e_refined = We_calc(12,1)*0.45359;
 M_bat = f_b*M_to_refined;
-S_takeoff = (1.44*M_to_refined^2)/(g*1.23*S*C_L_max*T_W*M_to_refined)
+
 
 
 %% Variables
@@ -136,7 +136,7 @@ F_rat = 6; %Fineness Ratio
 %% Initial estimation sizing on Fuselage, Wing, Tail Volume, Control Surfaces.
 
 Length_fuse = 0.169*(M_to_refined)^0.51; %Fuselage Length based on statistics (m)
-Width_fuse = F_rat/Length_fuse; % Fuselage Width (m)
+Width_fuse = 1/(F_rat/Length_fuse); % Fuselage Width (m)
 b = (AR*S)^0.5; %Wing span
 C_root = (2*S)/(b*(1+Taper_rat)); %Length of Root
 MAC = 2/3 * C_root * (1+ Taper_rat + Taper_rat^2)/(1 + Taper_rat); %Mean Aerodynamic Chord
