@@ -283,7 +283,7 @@ end
     pol.Bot_Xtr = P{7}(:,1);
   end
   if length(pol.alpha) ~= Nalpha % Check if xfoil failed to converge 
-     warning('One or more alpha values failed to converge. Last converged was alpha = %f. Rerun with ''oper iter ##'' command.\n', pol.alpha(end)) 
+     warning('One or more alpha values failed to converge. Rerun with ''oper iter ##'' command.\n') 
   end
   
 end
