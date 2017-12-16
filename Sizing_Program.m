@@ -12,7 +12,8 @@ V_cruise_kmh = 450;
 V_stall_kmh = 145; 
 C_L_max = 2; %With flaps used
 
-
+Taper_rat = 0.4; 
+F_rat = 6; %Fineness Ratio
 
 %% Variables 
 g = 9.8;
@@ -42,7 +43,6 @@ for i=2:12
 end
 M_to = fo_calc(12,1); 
 
-%%
 %% Conversions
 V_max_fps = 0.91134*V_max_kmh; %Velocity feet per second
 V_max_mps = 0.277778*V_max_kmh; %Velocity meter per second
@@ -55,7 +55,8 @@ T_W_cruise = 1/L_D;
 T_W_to = T_W_cruise*1/0.6;
 P_W_cruise_fps = T_W_to/(eta*550/V_max_fps); % P_W required for cruise at retard units
 P_W_cruise = P_W_cruise_fps*(0.74570/0.45359); %Convert to metric kW/kg
-if P_W_stat>P_W_cruise % Maximum P/W case
+
+if P_W_stat>P_W_cruise 
     P_W = P_W_stat;
 else
     P_W = P_W_cruise;
@@ -63,7 +64,7 @@ end
 P_W_fps=P_W*(1.34102/2.20462); % in hp/lb
 
 %% Wing Loading Specification (Pick Lowest W/S), Different scenario of W/S
-W_S_approx = 195*9.8; %W/S ratio kg/m^2 
+W_S_approx = 195*9.8; %W/S ratio  
 W_S_stall = 1/2 * 1.23 * V_stall_mps^2 * C_L_max;
 
 W_S_cruise = 1/2*0.69747*V_cruise_mps^2 * (pi*AR*0.8*0.024)^0.5;
@@ -131,8 +132,10 @@ M_bat = f_b*M_to_refined;
 %% Variables
 %Fineness ratio of 6 to 8 (Fineness ratio => length of fuselage/maximum width
 %of fuselage.
-Taper_rat = 0.4; 
-F_rat = 6; %Fineness Ratio
+T_vt = 0.7;
+AR_vt = 0.6;
+T_ht = 0.3;
+AR_ht = 2.8; %horizontal AR needs to be smaller so that you have less structural problem (Assumption here)
 %% Initial estimation sizing on Fuselage, Wing, Tail Volume, Control Surfaces.
 
 Length_fuse = 0.169*(M_to_refined)^0.51; %Fuselage Length based on statistics (m)
@@ -140,18 +143,51 @@ Width_fuse = 1/(F_rat/Length_fuse); % Fuselage Width (m)
 b = (AR*S)^0.5; %Wing span
 C_root = (2*S)/(b*(1+Taper_rat)); %Length of Root
 MAC = 2/3 * C_root * (1+ Taper_rat + Taper_rat^2)/(1 + Taper_rat); %Mean Aerodynamic Chord
-S_vt = (0.08*b*S)/(0.55*Length_fuse); %Area of vertical tail
-S_ht = (0.9*MAC*0.25*S)/(0.55*Length_fuse); %Area of horizontal tail
+S_vt = (0.08*0.95*b*S)/(0.55*Length_fuse); %Area of vertical tail
+S_ht = (0.9*0.95*MAC*0.25*S)/(0.55*Length_fuse); %Area of horizontal tail
 
-T = table(M_to,S,W_S,P_W,S_landing,C_L_cruise,M_to_refined);
+b_vt = (AR_vt*S_vt)^0.5; %Span of vertical and horizontal tail
+b_ht = (AR_ht*S_ht)^0.5;
+Cr_vt = (2*S_vt)/(b_vt*(1+T_vt)); %chord length of vt and ht
+Cr_ht = (2*S_ht)/(b_ht*(1+T_ht));
 
-T.Properties.VariableNames = {'MTOW_Initial' 'Wing_Area' 'Wing_Loading' 'Power_to_Weight' 'Landing_Distance' 'Cruise_Lift_Coef' 'MTOW_Final'}
+b_a = 0.5 * b; %Aileron span 
+C_a = 0.18 * C_root; %Aileron chord
+C_e = 0.36 * Cr_ht;
+b_e = 0.9 * b_ht; 
+C_r = 0.46 * Cr_vt; 
+b_r = 0.9 * b_vt; 
 
-T2 = table(Length_fuse,Width_fuse,b,C_root,S_vt,S_ht);
-T2.Properties.VariableNames = {'Fuse_Length' 'Fuse_Width' 'Wing_Span' 'Root_Length' 'Vertical_Stabilizier_Area' 'Horizontal_Stabilizer_Area'}
-
-
-
+f = figure;
+t = uitable(f);
+dat = { 'MTOW (kg)',sprintf('%.f',M_to_refined);
+        'Wing Area m^2',sprintf('%.2f',S) ;
+        'W/S (kg/m^2)',sprintf('%.2f',W_S);
+        'P/W (kwh/kg)',sprintf('%.3f',P_W);
+        'Landing distance (m)',sprintf('%.2f',S_landing);
+        'Cl cruise',sprintf('%.3f',C_L_cruise);
+        'Fuselage Length (m)',sprintf('%.3f',Length_fuse);
+        'Fuselage Width (m)', sprintf('%.3f',Width_fuse);
+        'Wing Span (m)', sprintf('%.3f',b); 
+        'C root (m)', sprintf('%.3f',C_root);
+        'VT area (m^2)', sprintf('%.3f',S_vt);
+        'HT area (m^2)',sprintf('%.3f',S_ht);
+        'VT span (m)',sprintf('%.3f',b_vt) ;
+        'HT span (m)',sprintf('%.3f',b_ht);
+        'VT chord (m)', sprintf('%.3f',Cr_vt);
+        'HT chord (m)', sprintf('%.3f',Cr_ht);
+        'Aileron span (m)', sprintf('%.3f',b_a);
+        'Aileron Chord (m)', sprintf('%.3f',C_a);
+        'Elevator span (m)',sprintf('%.3f',b_e);
+        'Elevator chord (m)',sprintf('%.3f',C_e);
+        'Rudder span (m)', sprintf('%.3f',b_r);
+        'Rudder chord (m)', sprintf('%.3f',C_r)
+        };
+t.Data = dat;
+t.ColumnWidth = {250, 'auto', 'auto', 250};
+t.Position = [25 25 380 600];
+t.FontSize = 11; 
+%% Cost 
 Q = linspace(300,1000); % production quantity
 FTA = 2; % number of flight test aircraft (typical 2-6)
 Neng = Q*2; % total production quantity times number of engines per aircraft
@@ -172,12 +208,12 @@ Re = 115;
 Rt = 118;
 Rm = 98;
 Rq = 108;
-
+%figure
 RDTEflywaway = He*Re+Ht*Rt+Hm*Rm+Hq*Rq+Cd+Cf+Ce*Neng+Ca+Kwh_cost.*Q;
-plot(Q, RDTEflywaway./Q/1e6)
+%plot(Q, RDTEflywaway./Q/1e6)
 
 %title()
-xlabel('Aircraft produced')
-ylabel('Cost per plane [Million USD]')
-print -depsc planecosts
+%xlabel('Aircraft produced')
+%ylabel('Cost per plane [Million USD]')
+%print -depsc planecosts
 
