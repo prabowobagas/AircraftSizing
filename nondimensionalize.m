@@ -1,9 +1,8 @@
-function [ Re, M, Cl ] = nondimensionalize( AR, S, V, W)
+function [ Re, M, Cl ] = nondimensionalize( AR, S, V, W, h)
 %nondimensionalize does what it says on the tin
 
-    rho = 0.73643; % Pa (air density at 5km)
-    mu = 1.628e-5; % N s/m^2
-    T = 255.69; % Kelving (temperature at 5km)
+    [T, rho, mu] = atmosphere(h);
+    
     g = 9.791;
 
     b = sqrt(AR*S); % m (span)

@@ -6,6 +6,7 @@ e0 = 0.8; % Wing efficiency
 W = 6147.8*g; % N (weight)
 W_bat = 1000; % kg
 V = 450/3.6; % m/s (cruise velocity)
+h = 5000; % m (cruising altitude)
 
 %% costs
 Q = linspace(300,1000);
@@ -21,7 +22,7 @@ print -depsc planecosts
 %% airfoil selection
 AR = 9;
 S = 30;
-[Re, M, Cl] = nondimensionalize(AR, S, V, W);
+[Re, M, Cl] = nondimensionalize(AR, S, V, W, h);
 airfoil = bestAirfoil(Cl, Re, M);
 %airfoil = 'coord_seligFmt/naca663418.dat';
 
@@ -29,7 +30,7 @@ airfoil = bestAirfoil(Cl, Re, M);
 figure();
 hold on;
 for AR = 8:12
-    [wingloading, Pr] = bestWingLoading(AR, 20:40, W, V, e0, airfoil)
+    [wingloading, Pr] = bestWingLoading(AR, 20:40, W, V, e0, h, airfoil)
 end
 
 title("Power required at cruise")
