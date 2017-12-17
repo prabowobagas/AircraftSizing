@@ -20,7 +20,7 @@ Cl = W/(0.5*rho*V^2*S);
 
 %% find best profile
 
-airfoils = dir('coord_seligFmt/*.dat');
+airfoils = dir('coord_seligFmt/naca6*.dat');
 alpha = zeros(0, length(airfoils));
 Cd = zeros(0, length(airfoils));
 for coord = 1:length(airfoils)
@@ -42,13 +42,14 @@ myalpha = alpha(Cd~=0);
 myairfoils = airfoils(Cd~=0);
 myCd = Cd(Cd~=0);
 
-outliers = isoutlier(myCd);
-outlierCd = myCd(outliers);
-outlieralpha = myalpha(outliers);
-myalpha(outliers) = [];
-myCd(outliers) = [];
-myairfoils(outliers) = [];
+%outliers = isoutlier(myCd);
+%outlierCd = myCd(outliers);
+%outlieralpha = myalpha(outliers);
+%myalpha(outliers) = [];
+%myCd(outliers) = [];
+%myairfoils(outliers) = [];
 
+figure(1);
 scatter(myalpha, myCd)
 title("Drag of various airfoils at cruise condition")
 xlabel("Alpha")
@@ -63,9 +64,11 @@ topCd = myCd(Cdidx(1:10))';
 topAlpha = myalpha(Cdidx(1:10))';
 table(topNames, topCd, topAlpha)
 
-topAirfoil = 'coord_seligFmt/naca663418.dat';
+%topAirfoil = 'coord_seligFmt/naca663418.dat';
+topAirfoil = strcat('coord_seligFmt/', myairfoils(Cdidx(1)).name);
 
 %% find optimal wing loading
+figure(2);
 hold on;
 for AR = 8:12
     Pr = [];
@@ -78,8 +81,8 @@ for AR = 8:12
 
         Cl = W/(0.5*rho*V^2*S);
 
-        %pol = xfoil(topAirfoil, Cl, Re, M, 'ppar n 300', 'oper iter 1000');
-        pol = xfoil('NACA2412', Cl, Re, M, 'ppar n 300', 'oper iter 1000');
+        pol = xfoil(topAirfoil, Cl, Re, M, 'ppar n 300', 'oper iter 1000');
+        %pol = xfoil('NACA2412', Cl, Re, M, 'ppar n 300', 'oper iter 1000');
         Cd2d = pol.CD;
         if Cd2d
             Cd = Cd2d + (Cl^2)/(pi*e0*AR);
@@ -87,9 +90,6 @@ for AR = 8:12
             usedS = [usedS S];
         end
     end
-    AR
-    Pr
-    usedS
     idxmin = find(Pr == min(Pr));
     plot(usedS, Pr,'-o',...
         'DisplayName',sprintf("AR=%d", AR),...
