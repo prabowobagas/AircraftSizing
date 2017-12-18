@@ -34,9 +34,9 @@ myCd = Cd(Cd~=0);
 
 figure();
 scatter(myalpha, myCd)
-title("Drag of various airfoils at cruise condition")
-xlabel("Alpha")
-ylabel("Cd")
+title('Drag of various airfoils at cruise condition')
+xlabel('Alpha')
+ylabel('Cd')
 print -depsc airfoilsummary
 
 %% find porfile with lowest drag
