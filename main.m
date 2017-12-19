@@ -42,6 +42,7 @@ C_L_cruise = M_to*g/(0.5*V_cruise_mps^2*0.73643*S);
 Q = linspace(300,1000);
 RDTEflywaway = costs(Q, M_to_refined, M_bat, V_max_kmh);
 
+
 % airfoil selection
 [Re, M, Cl] = nondimensionalize(AR,S,V_cruise_mps,M_to_refined*g,h);
 airfoil = bestAirfoil(1.2, Re, M); %%EDITED TO SEMI EMPIRCAL DATA
