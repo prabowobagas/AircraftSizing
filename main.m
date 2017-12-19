@@ -45,7 +45,7 @@ C_L_cruise = M_to*g/(0.5*V_cruise_mps^2*0.73643*S);
 
 %% costs
 Q = linspace(300,1000);
-RDTEflywaway = costs(Q, M_to_refined, M_bat, V*3.6);
+RDTEflywaway = costs(Q, M_to_refined, M_bat, V_max_kmh);
 
 figure();
 plot(Q, RDTEflywaway./Q/1e6)
