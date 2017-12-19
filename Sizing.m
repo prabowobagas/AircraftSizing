@@ -1,4 +1,4 @@
-function [Length_fuse, Width_fuse,b,C_root,MAC,S_vt,b_vt,Cr_vt,S_ht,b_ht,Cr_ht,C_a,b_a,C_e,b_e,C_r,b_r] = Sizing(M_to_refined,F_rat,Taper_rat,AR,S,T_vt,AR_vt,T_ht,AR_ht,per_a)
+function [Length_fuse, Width_fuse,b,C_root,MAC,S_vt,b_vt,Cr_vt,S_ht,b_ht,Cr_ht,C_a,b_a,C_e,b_e,C_r,b_r,L_vt,L_ht] = Sizing(M_to_refined,F_rat,Taper_rat,AR,S,T_vt,AR_vt,T_ht,AR_ht,per_a)
 %Sizing 
 %   INPUT:  (All in metric)
 %           MTOW
@@ -36,12 +36,14 @@ C_root = (2.*S)./(b.*(1+Taper_rat)); %Length of Root
 MAC = 2./3 .* C_root .* (1+ Taper_rat + Taper_rat.^2)./(1 + Taper_rat); %Mean Aerodynamic Chord
 
 S_vt = (0.08.*0.95.*b.*S)./(0.55.*Length_fuse); %Area of vertical tail
+L_vt= 0.55.*Length_fuse;
 b_vt = (AR_vt.*S_vt).^0.5; %Span of vertical and horizontal tail
 Cr_vt = (2.*S_vt)./(b_vt.*(1+T_vt)); %chord length of vt and ht
 
 S_ht = (0.9.*0.95.*MAC.*0.25.*S)./(0.55.*Length_fuse); %Area of horizontal tail
 b_ht = (AR_ht.*S_ht).^0.5;
 Cr_ht = (2.*S_ht)./(b_ht.*(1+T_ht));
+L_ht = 0.55.*Length_fuse;
 
 b_a = per_a .* b; %Aileron span assumed to be 50% of whole span 
 C_a = 0.18 .* C_root; %Aileron chord

@@ -8,7 +8,7 @@ function [M_to,f_b,M_e] = Mass_Iteration1(Range,m_payload,L_D)
 %           Empty Mass (Kg)
 
 R = Range.*10.^3;
-E = 3.6.*10.^6; %Energy Density in Joules
+E = 3.6 .* 10.^6; %Energy Density in Joules
 g = 9.8;
 eta = 0.8; %efficiency
 f_e = 1.4.*3000.^(-0.1); %inital sizing from 3000 kg

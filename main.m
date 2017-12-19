@@ -1,7 +1,7 @@
-clear all;
+clear ;
 close all;
-
-
+clc;
+%% Parameters
 h = 5000; % m (cruising altitude)
 
 AR = 9.7;
@@ -14,7 +14,7 @@ V_cruise_kmh = 450;
 V_stall_kmh = 145; 
 C_L_max = 2; %With flaps used
 Taper_rat = 0.4;  %Main wing taper ratio
-e0=0.8; %Oswald efficiency
+e0=1.78.*(1-0.045*AR^0.68)-0.64;
 per_a = 0.5; %Percentage of aileron span respect to total wing span 
 g=9.81; 
 
@@ -29,53 +29,40 @@ AR_ht = 2.8; %Aspect Ratio horizontal tail
 
 %% Calculation
 [M_to,f_b] = Mass_Iteration1(Range,m_payload,L_D);
-
 P_W = Power_Weight(V_max_kmh,L_D);
-
 [W_S,S] = Wing_Loading(V_stall_kmh,V_cruise_kmh,C_L_max,AR,M_to);
 
 V_cruise_mps = V_cruise_kmh*0.27778;
+
 C_L_cruise = M_to*g/(0.5*V_cruise_mps^2*0.73643*S);
-
-
 [M_to_refined,M_e_refined,M_bat] = Mass_Iteration2(V_max_kmh,P_W,W_S,AR,f_b,m_payload);
-
-[Length_fuse, Width_fuse,b,C_root,MAC,S_vt,b_vt,Cr_vt,S_ht,b_ht,Cr_ht,b_a,C_a,C_e,b_e,C_r,b_r] = Sizing(M_to_refined,F_rat,Taper_rat,AR,S,T_vt,AR_vt,T_ht,AR_ht,per_a);
-
+[Length_fuse, Width_fuse,b,C_root,MAC,S_vt,b_vt,Cr_vt,S_ht,b_ht,Cr_ht,C_a,b_a,C_e,b_e,C_r,b_r,L_vt,L_ht]= Sizing(M_to_refined,F_rat,Taper_rat,AR,S,T_vt,AR_vt,T_ht,AR_ht,per_a);
 
 %% costs
 Q = linspace(300,1000);
-RDTEflywaway = costs(Q, M_to_refined, M_bat, V*3.6);
+RDTEflywaway = costs(Q, M_to_refined, M_bat, V_max_kmh);
 
-figure();
-plot(Q, RDTEflywaway./Q/1e6)
-
-xlabel('Aircraft produced')
-ylabel('Cost per plane [Million USD]')
-print -depsc planecosts
-
-%% airfoil selection
-[Re, M, Cl] = nondimensionalize(AR,S,V,M_to_refined*g,h);
-airfoil = bestAirfoil(Cl, Re, M);
+% airfoil selection
+[Re, M, Cl] = nondimensionalize(AR,S,V_cruise_mps,M_to_refined*g,h);
+airfoil = bestAirfoil(1.2, Re, M); %%EDITED TO SEMI EMPIRCAL DATA
 %airfoil = 'coord_seligFmt/naca663418.dat';
 
 %% wing loading
-figure();
+f1=figure;
 hold on;
 for AR = 8:12
-    [wingloading, Pr] = bestWingLoading(AR, 20:40, M_to_refined*g, V, e0, h, airfoil)
+    [wingloading, Pr] = bestWingLoading(AR, 20:40, M_to_refined*g, V_cruise_mps, e0, h, airfoil);
 end
-
 title('Power required at cruise')
 xlabel('Wing area [m^2]')
 ylabel('Power required [Watt]')
 legend('show')
 grid on;
-
 print -depsc powerrequired
 
 %% Output
-f = figure;
+f = figure('position',[500 250 1000 750]);
+subplot(2,2,[2,4]);
 t = uitable(f);
 data = { 'MTOW (kg)',sprintf('%.f',M_to_refined);
         'Wing Area m^2',sprintf('%.2f',S) ;
@@ -89,6 +76,7 @@ data = { 'MTOW (kg)',sprintf('%.f',M_to_refined);
         'VT area (m^2)', sprintf('%.3f',S_vt);
         'VT span (m)',sprintf('%.3f',b_vt) ;
         'VT chord (m)', sprintf('%.3f',Cr_vt);
+        'L VT placement',L_vt;
         'HT area (m^2)',sprintf('%.3f',S_ht);
         'HT span (m)',sprintf('%.3f',b_ht);
         'HT chord (m)', sprintf('%.3f',Cr_ht);
@@ -100,9 +88,25 @@ data = { 'MTOW (kg)',sprintf('%.f',M_to_refined);
         'Rudder chord (m)', sprintf('%.3f',C_r)
         };
 t.Data = data;
-t.ColumnWidth = {250, 'auto', 'auto', 250};
+t.ColumnWidth = {200,'auto'};
 t.Position = [25 25 380 600];
 t.FontSize = 11; 
+subplot(2,2,[2,4]),plot(1)
+pos = get(subplot(2,2,[2,4]),'position');
+delete(subplot(2,2,[2,4]))
+set(t,'units','normalized')
+set(t,'position',pos)
+
+subplot(2,2,3);
+f1;
+
+subplot(2,2,1);
+plot(Q, RDTEflywaway./Q/1e6)
+title('Plane Cost')
+xlabel('Aircraft produced')
+ylabel('Cost per plane [Million USD]')
+
+
 
 % For Turboprop, Historical values are :
 % P/W = 0.33 (kW/kg)
@@ -117,3 +121,8 @@ t.FontSize = 11;
 % V stall = 140 km/h
 % TO distance = 605 m
 % Landing distance = 640 m 
+
+
+
+
+
