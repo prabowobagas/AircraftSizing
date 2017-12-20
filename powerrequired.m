@@ -1,4 +1,4 @@
-function [ Pr ] = powerrequired( AR, S, W, V, e0, h, airfoil)
+function [ Pr aoa] = powerrequired( AR, S, W, V, e0, h, airfoil)
 %powerrequired calculate the powe required for cruise flight
 %   AR aspect ratio
 %   S  wing area (m^2)
@@ -10,8 +10,8 @@ function [ Pr ] = powerrequired( AR, S, W, V, e0, h, airfoil)
     [T, rho, mu] = atmosphere(h);
     [Re, M, Cl] = nondimensionalize(AR, S, V, W, h);
 
-    pol = xfoil(airfoil, Cl, Re, M, 'ppar n 300', 'oper iter 100');
-    aoa = pol.alpha
+    pol = xfoil(airfoil, Cl, Re, M, 'ppar n 200', 'oper iter 100');
+    aoa = pol.alpha;
     %pol = xfoil('NACA2412', Cl, Re, M, 'ppar n 300', 'oper iter 1000');
     Cd2d = pol.CD;
     if Cd2d
