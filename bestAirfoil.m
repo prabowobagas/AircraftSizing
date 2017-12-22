@@ -4,7 +4,7 @@ function [ airfoil ] = bestAirfoil( Cl, Re, M )
 %   Running xfoil on them for a given Cl
 %   Returns the airfoil with the lowest Cd
 
-airfoils = dir('coord_seligFmt/naca6*.dat');
+airfoils = [dir('coord_seligFmt/naca6*.dat'); dir('coord_seligFmt/n6*.dat')] ;
 alpha = zeros(0, length(airfoils));
 Cd = zeros(0, length(airfoils));
 for coord = 1:length(airfoils)
@@ -25,12 +25,12 @@ myalpha = alpha(Cd~=0);
 myairfoils = airfoils(Cd~=0);
 myCd = Cd(Cd~=0);
 
-%outliers = isoutlier(myCd);
-%outlierCd = myCd(outliers);
-%outlieralpha = myalpha(outliers);
-%myalpha(outliers) = [];
-%myCd(outliers) = [];
-%myairfoils(outliers) = [];
+outliers = isoutlier(myCd);
+outlierCd = myCd(outliers);
+outlieralpha = myalpha(outliers);
+myalpha(outliers) = [];
+myCd(outliers) = [];
+myairfoils(outliers) = [];
 
 figure();
 scatter(myalpha, myCd)
@@ -41,10 +41,11 @@ print -depsc airfoilsummary
 
 %% find porfile with lowest drag
 
+topn = 4;
 [~,Cdidx] = sort(myCd,'ascend');
-topNames = {myairfoils(Cdidx(1:10)).name}';
-topCd = myCd(Cdidx(1:10))';
-topAlpha = myalpha(Cdidx(1:10))';
+topNames = {myairfoils(Cdidx(1:topn)).name}';
+topCd = myCd(Cdidx(1:topn))';
+topAlpha = myalpha(Cdidx(1:topn))';
 table(topNames, topCd, topAlpha)
 
 %topAirfoil = 'coord_seligFmt/naca663418.dat';
