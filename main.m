@@ -55,10 +55,31 @@ xlabel('Aircraft produced')
 ylabel('Cost per plane [Million USD]')
 
 
-% airfoil selection
-[Re, M, Cl] = nondimensionalize(AR,S,V_cruise_mps,M_to_refined*g,h);
-%airfoil = bestAirfoil(1.2, Re, M); %%EDITED TO SEMI EMPIRCAL DATA
+%% airfoil selection
+[nameacc, Sacc, Pracc] = bestAirfoil(AR, S, M_to_refined*g, V_cruise_mps, e0, h);
+
+figure()
+scatter(Sacc, Pracc);
+xlabel('Wing area [m^2]')
+ylabel('Power required [Watt]')
+
+idx = Sacc < 30 & Sacc > 0;
+Ssmall = Sacc(idx);
+Prsmall = Pracc(idx);
+namesmall = nameacc(idx);
+[Prtop,Pridx] = sort(Prsmall,'ascend');
+Stop = Ssmall(Pridx);
+nametop = namesmall(Pridx);
+
+figure()
+scatter(Stop(1:20), Prtop(1:20))
+text(Stop(1:20), Prtop(1:20), nametop(1:20))
+xlabel('Wing area [m^2]')
+ylabel('Power required [Watt]')
+
 airfoil = 'coord_seligFmt/naca652415.dat';
+% airfoil = 'coord_seligFmt/ua79sf18.dat';
+% airfoil = 'coord_seligFmt/nlf414f.dat';
 
 %% wing loading
 figure();

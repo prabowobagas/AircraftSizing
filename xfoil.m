@@ -1,4 +1,4 @@
-function [pol,foil] = xfoil(coord,alpha,Re,Mach,varargin)
+function [pol,foil] = xfoil(coord,mode,alpha,Re,Mach,varargin)
 % Run XFoil and return the results.
 % [polar,foil] = xfoil(coord,alpha,Re,Mach,{extra commands})
 %
@@ -149,7 +149,7 @@ else
     file_cpwr{ii} = sprintf('%s_a%06.3f_cpwr.dat',fname,alpha(ii));
     % Commands
     %fprintf(fid,'alfa %g\n',alpha(ii));
-    fprintf(fid,'Cl %g\n',alpha(ii));
+    fprintf(fid,'%s %g\n',mode,alpha(ii));
     fprintf(fid,'dump %s\n',file_dump{ii});
     fprintf(fid,'cpwr %s\n',file_cpwr{ii});
   end;
