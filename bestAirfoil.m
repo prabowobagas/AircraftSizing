@@ -1,4 +1,4 @@
-function [ nameacc, Sacc, Pracc ] = bestAirfoil(AR, S0, W, V, e0, h)
+function [ nameacc, Sacc, Pracc ] = bestAirfoil(AR, S0, W, V, e0, h,Cdf)
 %bestAirfoil Let xfoil calculate minimum drag
 %   Loops over all NACA 6 airfoils in thcoord_seligFmt
 %   Running xfoil on them for a given Cl
@@ -21,7 +21,7 @@ function [ nameacc, Sacc, Pracc ] = bestAirfoil(AR, S0, W, V, e0, h)
             continue
         end
         if ~isempty(pol.alpha)
-            Cd3d = pol.CD + (pol.CL.^2)/(pi*e0*AR);
+            Cd3d = pol.CD + (pol.CL.^2)/(pi*0.98*AR)+Cdf;
             LD = pol.CL./Cd3d;
             [~, idx] = max(LD);
 
