@@ -61,34 +61,34 @@ ylabel('Cost per plane [Million USD]')
 
 
 %% airfoil selection
-[nameacc, Sacc, Pracc] = bestAirfoil(AR, S, M_to_refined*g, V_cruise_mps, e0, h, Cdf);
+% [nameacc, Sacc, Pracc] = bestAirfoil(AR, S, M_to_refined*g, V_cruise_mps, e0, h, Cdf);
+% 
+%  figure()
+%  scatter(Sacc, Pracc);
+% xlabel('Wing area [m^2]')
+% ylabel('Power required [Watt]')
+% 
+% idx = Sacc < 30 & Sacc > 0;
+% Ssmall = Sacc(idx);
+% Prsmall = Pracc(idx);
+% namesmall = nameacc(idx);
+% [Prtop,Pridx] = sort(Prsmall,'ascend');
+% Stop = Ssmall(Pridx);
+% nametop = namesmall(Pridx);
+% 
+% figure()
+% scatter(Stop(1:20), Prtop(1:20))
+% text(Stop(1:20), Prtop(1:20), nametop(1:20))
+% xlabel('Wing area [m^2]')
+% ylabel('Power required [Watt]')
 
- figure()
- scatter(Sacc, Pracc);
-xlabel('Wing area [m^2]')
-ylabel('Power required [Watt]')
-
-idx = Sacc < 30 & Sacc > 0;
-Ssmall = Sacc(idx);
-Prsmall = Pracc(idx);
-namesmall = nameacc(idx);
-[Prtop,Pridx] = sort(Prsmall,'ascend');
-Stop = Ssmall(Pridx);
-nametop = namesmall(Pridx);
-
-figure()
-scatter(Stop(1:20), Prtop(1:20))
-text(Stop(1:20), Prtop(1:20), nametop(1:20))
-xlabel('Wing area [m^2]')
-ylabel('Power required [Watt]')
-
-airfoil = 'coord_seligFmt/naca652415.dat';
-airfoil = 'coord_seligFmt/ua79sf18.dat';
- airfoil = 'coord_seligFmt/nlf414f.dat';
+%airfoil = 'coord_seligFmt/naca652415.dat';
+%airfoil = 'coord_seligFmt/ua79sf18.dat';
+airfoil = 'coord_seligFmt/nlf414f.dat';
 figure()
 [Re, M, Cl] = nondimensionalize(AR, S, V_cruise_kmh/3.6, M_to_refined, h);
 pol = xfoil(airfoil, 'alfa', 0:0.5:15, Re, M, 'ppar n 200', 'oper iter 500');
-Cd3d = pol.CD + (pol.CL.^2)/(pi*0.98*AR)+Cdf;
+Cd3d = pol.CD + (pol.CL.^2)/(pi*e0*AR)+Cdf;
 LD = pol.CL./Cd3d;
 plot(pol.alpha,LD)
 title('L/D vs alpha');

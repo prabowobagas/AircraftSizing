@@ -21,7 +21,7 @@ function [ nameacc, Sacc, Pracc ] = bestAirfoil(AR, S0, W, V, e0, h,Cdf)
             continue
         end
         if ~isempty(pol.alpha)
-            Cd3d = pol.CD + (pol.CL.^2)/(pi*0.98*AR)+Cdf;
+            Cd3d = pol.CD + (pol.CL.^2)/(pi*e0*AR)+Cdf;
             LD = pol.CL./Cd3d;
             [~, idx] = max(LD);
 
