@@ -1,4 +1,4 @@
-function [ wing_loading, Pr, min_aoa ] = bestWingLoading(AR, Sp, W, V, e0, h, airfoil,Cdf)
+function [ wing_loading, Pr, min_aoa ] = bestWingLoading(AR, Sp, W, V, e0, h, airfoil,S_fuse)
 %bestWingLoading 
 %   AR aspect ratio
 %   Sp vector of proposed areas to check ([m^2])
@@ -13,7 +13,7 @@ function [ wing_loading, Pr, min_aoa ] = bestWingLoading(AR, Sp, W, V, e0, h, ai
     allS = [];
     all_aoa = [];
     for S = Sp
-        [Pr, aoa]= powerrequired(AR, S, W, V, e0, h, airfoil,Cdf);
+        [Pr, aoa]= powerrequired(AR, S, W, V, e0, h, airfoil,S_fuse);
         if Pr
             allPr = [allPr Pr];
             allS = [allS S];

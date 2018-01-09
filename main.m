@@ -46,10 +46,8 @@ C_L_cruise = M_to_refined*g/(0.5*V_cruise_mps^2*rho_cruise*S);
 C_L_landing = M_to_refined*g/(0.5*(V_stall_kmh/3.6)^2*rho_sl*S);
 
 %Semi-Empirical case for now
-S_fuse = pi*W_fuse^2*0.25 * 2 + L_fuse*pi*W_fuse;
-Sw = S_fuse + S;
-Sw_rat = Sw/S;
-Cdf = Sw_rat * 0.0065;
+S_fuse = pi*W_fuse^2*0.25 * 2 + L_fuse*pi*W_fuse; %Surface area of fuselage
+
 %% costs
 figure();
 Q = linspace(300,1000);
@@ -83,23 +81,27 @@ ylabel('Cost per plane [Million USD]')
 % ylabel('Power required [Watt]')
 
 %airfoil = 'coord_seligFmt/naca652415.dat';
-%airfoil = 'coord_seligFmt/ua79sf18.dat';
-airfoil = 'coord_seligFmt/nlf414f.dat';
+airfoil = 'coord_seligFmt/ua79sf18.dat';
+%airfoil = 'coord_seligFmt/nlf414f.dat';
+
 figure()
 [Re, M, Cl] = nondimensionalize(AR, S, V_cruise_kmh/3.6, M_to_refined, h);
 pol = xfoil(airfoil, 'alfa', 0:0.5:15, Re, M, 'ppar n 200', 'oper iter 500');
-Cd3d = pol.CD + (pol.CL.^2)/(pi*e0*AR)+Cdf;
-LD = pol.CL./Cd3d;
-plot(pol.alpha,LD)
-title('L/D vs alpha');
-xlabel('Alpha');
-ylabel('L/D');
+
+
+
+% Cd3d = pol.CD + (pol.CL.^2)/(pi*e0*AR)+Cdf;
+% LD = pol.CL./Cd3d;
+% plot(pol.alpha,LD)
+% title('L/D vs alpha');
+% xlabel('Alpha');
+% ylabel('L/D');
 
 %% wing loading
 figure();
 hold on;
 for AR = 8:12
-    [wingloading, Pr, min_aoa] = bestWingLoading(AR, 10:2:40, M_to_refined*g, V_cruise_mps, e0, h, airfoil,Cdf);
+    [wingloading, Pr, min_aoa] = bestWingLoading(AR, 10:2:40, M_to_refined*g, V_cruise_mps, e0, h, airfoil,S_fuse);
 end
 title('Power required at cruise')
 xlabel('Wing area [m^2]')
