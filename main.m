@@ -63,8 +63,8 @@ ylabel('Cost per plane [Million USD]')
 %% airfoil selection
 % [nameacc, Sacc, Pracc] = bestAirfoil(AR, S, M_to_refined*g, V_cruise_mps, e0, h, Cdf);
 % 
-%  figure()
-%  scatter(Sacc, Pracc);
+% figure()
+% scatter(Sacc, Pracc);
 % xlabel('Wing area [m^2]')
 % ylabel('Power required [Watt]')
 % 
@@ -82,12 +82,16 @@ ylabel('Cost per plane [Million USD]')
 % xlabel('Wing area [m^2]')
 % ylabel('Power required [Watt]')
 
-%airfoil = 'coord_seligFmt/naca652415.dat';
+airfoil = 'coord_seligFmt/naca652415.dat';
 %airfoil = 'coord_seligFmt/ua79sf18.dat';
-airfoil = 'coord_seligFmt/nlf414f.dat';
+%airfoil = 'coord_seligFmt/nlf414f.dat';
+
+%% aoa plot
+
 figure()
 [Re, M, Cl] = nondimensionalize(AR, S, V_cruise_kmh/3.6, M_to_refined, h);
 pol = xfoil(airfoil, 'alfa', 0:0.5:15, Re, M, 'ppar n 200', 'oper iter 500');
+Cdf = fuselage_drag(L_fuse, W_fuse, S, h);
 Cd3d = pol.CD + (pol.CL.^2)/(pi*e0*AR)+Cdf;
 LD = pol.CL./Cd3d;
 plot(pol.alpha,LD)
@@ -99,7 +103,7 @@ ylabel('L/D');
 figure();
 hold on;
 for AR = 8:12
-    [wingloading, Pr, min_aoa] = bestWingLoading(AR, 10:2:40, M_to_refined*g, V_cruise_mps, e0, h, airfoil,Cdf);
+    [wingloading, Pr, min_aoa] = bestWingLoading(AR, 10:2:40, M_to_refined*g, V_cruise_mps, e0, h, airfoil);
 end
 title('Power required at cruise')
 xlabel('Wing area [m^2]')
