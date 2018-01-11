@@ -1,4 +1,4 @@
-function [ Pr, aoa, Cd] = powerrequired( AR, S, W, V, e0, h, airfoil)
+function [ Pr, aoa, Cd] = powerrequired( AR, S, W, V, e0, h, airfoil, L_fuse, W_fuse)
 %powerrequired calculate the powe required for cruise flight
 %   AR aspect ratio
 %   S  wing area (m^2)
@@ -14,8 +14,9 @@ function [ Pr, aoa, Cd] = powerrequired( AR, S, W, V, e0, h, airfoil)
     aoa = pol.alpha;
     %pol = xfoil('NACA2412', Cl, Re, M, 'ppar n 300', 'oper iter 1000');
     Cd2d = pol.CD;
+    Cdf = fuselage_drag(L_fuse, W_fuse, S, h, V);
     if Cd2d
-        Cd = Cd2d + (Cl^2)/(pi*e0*AR);
+        Cd = Cd2d + (Cl^2)/(pi*e0*AR) + Cdf;
         Pr = sqrt(2*W^3*Cd.^2./(rho*S*Cl.^3));
     else
         Pr = [];

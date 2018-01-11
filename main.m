@@ -89,7 +89,7 @@ airfoil = 'coord_seligFmt/naca652415.dat';
 %% aoa plot
 
 figure()
-[Re, M, Cl] = nondimensionalize(AR, S, V_cruise_kmh/3.6, M_to_refined, h);
+[Re, M, Cl] = nondimensionalize(AR, S, V_cruise_mps, M_to_refined, h);
 pol = xfoil(airfoil, 'alfa', 0:0.5:15, Re, M, 'ppar n 200', 'oper iter 500');
 Cdf = fuselage_drag(L_fuse, W_fuse, S, h, V_cruise_mps);
 Cd3d = pol.CD + (pol.CL.^2)/(pi*e0*AR)+Cdf;
@@ -103,7 +103,7 @@ ylabel('L/D');
 figure();
 hold on;
 for AR = 8:12
-    [wingloading, Pr, min_aoa] = bestWingLoading(AR, 10:2:40, M_to_refined*g, V_cruise_mps, e0, h, airfoil);
+    [wingloading, Pr, min_aoa] = bestWingLoading(AR, 10:2:40, M_to_refined*g, V_cruise_mps, e0, h, airfoil, L_fuse, W_fuse);
 end
 title('Power required at cruise')
 xlabel('Wing area [m^2]')
