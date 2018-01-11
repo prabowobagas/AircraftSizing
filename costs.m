@@ -18,7 +18,7 @@ Cd = 67.4*M^0.630*V^1.3; % Devel support cost
 Cf = 1947*M^0.325*V^0.822*FTA^1.21; % Flt test cost
 Cm = 31.2*M^0.921*V^0.621*Q.^0.79; %  Mfg materials cost
 Ce = 50*Tmax; % engine cost
-Kwh_cost = M_bat*1000*0.5;
+Kwh_cost = M_bat*1000*0.1; %cost is $100/kwh source:https://cleantechnica.com/2017/12/25/timeline-electric-vehicle-revolution-via-lower-battery-prices-supercharging-lower-battery-prices/
 
 Re = 115;
 Rt = 118;
