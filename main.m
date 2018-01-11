@@ -91,7 +91,7 @@ airfoil = 'coord_seligFmt/naca652415.dat';
 figure()
 [Re, M, Cl] = nondimensionalize(AR, S, V_cruise_kmh/3.6, M_to_refined, h);
 pol = xfoil(airfoil, 'alfa', 0:0.5:15, Re, M, 'ppar n 200', 'oper iter 500');
-Cdf = fuselage_drag(L_fuse, W_fuse, S, h);
+Cdf = fuselage_drag(L_fuse, W_fuse, S, h, V_cruise_mps);
 Cd3d = pol.CD + (pol.CL.^2)/(pi*e0*AR)+Cdf;
 LD = pol.CL./Cd3d;
 plot(pol.alpha,LD)
