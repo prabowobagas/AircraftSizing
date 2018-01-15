@@ -49,7 +49,14 @@ C_L_landing = M_to_refined*g/(0.5*(V_stall_kmh/3.6)^2*rho_sl*S);
 
 
 %LANDING AND TAKE-OFF SPECIFICATION
-C_L_to = 1.6 %With flaps at 20 deg.
+C_L_to = 1.6; %With flaps at 20 deg.
+
+%Semi-Empirical case for now
+S_fuse = L_fuse*pi*W_fuse;
+Sw = S_fuse + S;
+Sw_rat = Sw/S;
+Cdf = Sw_rat * 0.0065;
+
 %% costs
 figure();
 Q = linspace(300,1000);
@@ -89,9 +96,9 @@ airfoil = 'coord_seligFmt/n63215.dat';
 %% aoa plot
 
 figure()
-[Re, M, Cl] = nondimensionalize(AR, S, V_cruise_kmh/3.6, M_to_refined, h);
+[Re, M, Cl] = nondimensionalize(AR, S, V_cruise_mps, M_to_refined, h);
 pol = xfoil(airfoil, 'alfa', 0:0.5:15, Re, M, 'ppar n 200', 'oper iter 500');
-Cdf = fuselage_drag(L_fuse, W_fuse, S, h);
+Cdf = fuselage_drag(L_fuse, W_fuse, S, h, V_cruise_mps);
 Cd3d = pol.CD + (pol.CL.^2)/(pi*e0*AR)+Cdf;
 LD = pol.CL./Cd3d;
 plot(pol.alpha,LD)
@@ -103,10 +110,10 @@ ylabel('L/D');
 figure();
 hold on;
 for AR = 8:12
-    [wingloading, Pr, min_aoa] = bestWingLoading(AR, 10:2:40, M_to_refined*g, V_cruise_mps, e0, h, airfoil);
+    [wingloading, Pr, min_aoa] = bestWingLoading(AR, 10:2:40, M_to_refined*g, V_cruise_mps, e0, h, airfoil, L_fuse, W_fuse);
 end
 title('Power required at cruise')
-xlabel('Wing area [m^2]')
+xlabel('Speed [km/h]')
 ylabel('Power required [Watt]')
 legend('show')
 grid on;
