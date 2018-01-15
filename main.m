@@ -3,8 +3,8 @@ close all;
 clc;
 %% Parameters
 h = 5000; % m (cruising altitude)
-
-AR = 10;
+%% DONT CHANGE ANYTHING FOR THE INPUT.
+AR = 9.7;
 L_D = 17.7; %L/D Guess
 m_payload=1000; %Set payload weight
 Range = 1000;% range in km
@@ -13,7 +13,7 @@ V_max_kmh = 500; %  maximum velocity not cruise (km/h)
 V_cruise_kmh = 450;
 V_stall_kmh = 145;
 V_stall_mps = V_stall_kmh/3.6;
-C_L_max = 1.8; %With flaps used during landing
+C_L_max = 1.8; %With flaps at 45 deg. used during landing NOTE THAT THIS IS 3d. The airfoil must be at Cl=2. 
 Taper_rat = 0.4;  %Main wing taper ratio
 e0=0.98;
 per_a = 0.5; %Percentage of aileron span respect to total wing span 
@@ -28,6 +28,7 @@ AR_ht = 2.8; %Aspect Ratio horizontal tail
 
 %% Calculation
 [T_sl, rho_sl, mu_sl] = atmosphere(0); % Sealevel
+
 [T_cruise, rho_cruise, mu_cruise] = atmosphere(h); % Cruise altitude
 
 [M_to,f_b] = Mass_Iteration1(Range,m_payload,L_D);
@@ -45,11 +46,10 @@ C_L_clean = W_S*g * 1/(0.5*V_stall_mps^2 *rho_sl);
 C_L_cruise = M_to_refined*g/(0.5*V_cruise_mps^2*rho_cruise*S);
 C_L_landing = M_to_refined*g/(0.5*(V_stall_kmh/3.6)^2*rho_sl*S);
 
-%Semi-Empirical case for now
-S_fuse = pi*W_fuse^2*0.25 * 2 + L_fuse*pi*W_fuse;
-Sw = S_fuse + S;
-Sw_rat = Sw/S;
-Cdf = Sw_rat * 0.0065;
+
+
+%LANDING AND TAKE-OFF SPECIFICATION
+C_L_to = 1.6 %With flaps at 20 deg.
 %% costs
 figure();
 Q = linspace(300,1000);
@@ -82,7 +82,7 @@ ylabel('Cost per plane [Million USD]')
 % xlabel('Wing area [m^2]')
 % ylabel('Power required [Watt]')
 
-airfoil = 'coord_seligFmt/naca652415.dat';
+airfoil = 'coord_seligFmt/n63215.dat';
 %airfoil = 'coord_seligFmt/ua79sf18.dat';
 %airfoil = 'coord_seligFmt/nlf414f.dat';
 
