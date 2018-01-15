@@ -46,7 +46,7 @@ C_L_cruise = M_to_refined*g/(0.5*V_cruise_mps^2*rho_cruise*S);
 C_L_landing = M_to_refined*g/(0.5*(V_stall_kmh/3.6)^2*rho_sl*S);
 
 %Semi-Empirical case for now
-S_fuse = pi*W_fuse^2*0.25 * 2 + L_fuse*pi*W_fuse;
+S_fuse = L_fuse*pi*W_fuse;
 Sw = S_fuse + S;
 Sw_rat = Sw/S;
 Cdf = Sw_rat * 0.0065;
@@ -106,7 +106,7 @@ for AR = 8:12
     [wingloading, Pr, min_aoa] = bestWingLoading(AR, 10:2:40, M_to_refined*g, V_cruise_mps, e0, h, airfoil, L_fuse, W_fuse);
 end
 title('Power required at cruise')
-xlabel('Wing area [m^2]')
+xlabel('Speed [km/h]')
 ylabel('Power required [Watt]')
 legend('show')
 grid on;

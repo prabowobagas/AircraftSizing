@@ -5,6 +5,8 @@ function [ Cd ] = fuselage_drag( C_fuse, D_fuse, S_wing, h, V_cruise)
 
     A=pi*D_fuse*C_fuse;
     
-    Cd = A/S_wing*Cf_fuse*2;  % Total drag of fuselage in Nwe
+    Df = 0.5*rho*V_cruise^2*A*Cf_fuse*2;
+    
+    Cd = A/S_wing*Cf_fuse*2; % Total drag
 end
 

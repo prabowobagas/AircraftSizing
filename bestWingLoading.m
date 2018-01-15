@@ -12,11 +12,12 @@ function [ wing_loading, Pr, min_aoa ] = bestWingLoading(AR, Sp, W, V, e0, h, ai
     allPr = [];
     allS = [];
     all_aoa = [];
-    for S = Sp
+    S = 30;
+    for V = 50:2:130
         [Pr, aoa]= powerrequired(AR, S, W, V, e0, h, airfoil, L_fuse, W_fuse);
         if Pr
             allPr = [allPr Pr];
-            allS = [allS S];
+            allS = [allS V];
             all_aoa = [all_aoa aoa];
         end
     end
@@ -24,7 +25,7 @@ function [ wing_loading, Pr, min_aoa ] = bestWingLoading(AR, Sp, W, V, e0, h, ai
     min_aoa = all_aoa(idxmin); 
     wing_loading = W/allS(idxmin);
     Pr = allPr(idxmin);
-    plot(allS, allPr,'-o',...
+    plot(allS*3.6, allPr,'-o',...
         'DisplayName',sprintf('AR=%d', AR),...
         'MarkerIndices',[idxmin])
    aoa_text = num2str(min_aoa);
