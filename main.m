@@ -82,7 +82,8 @@ ylabel('Cost per plane [Million USD]')
 % xlabel('Wing area [m^2]')
 % ylabel('Power required [Watt]')
 
-airfoil = 'coord_seligFmt/naca652415.dat';
+airfoil = 'coord_seligFmt/n63415.dat';
+%airfoil = 'coord_seligFmt/naca652415.dat';
 %airfoil = 'coord_seligFmt/ua79sf18.dat';
 %airfoil = 'coord_seligFmt/nlf414f.dat';
 
@@ -106,7 +107,7 @@ for AR = 8:12
     [wingloading, Pr, min_aoa] = bestWingLoading(AR, 10:2:40, M_to_refined*g, V_cruise_mps, e0, h, airfoil, L_fuse, W_fuse);
 end
 title('Power required at cruise')
-xlabel('Speed [km/h]')
+xlabel('Area [m^2]')
 ylabel('Power required [Watt]')
 legend('show')
 grid on;
